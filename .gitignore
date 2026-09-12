@@ -1,0 +1,55 @@
+# =========================
+# TERRAFORM
+# =========================
+
+# Ignore downloaded plugins (providers) and cloned modules
+**/.terraform/*
+
+# Ignore state files (CRITICAL: they contain infrastructure secrets in plain text!)
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+
+# Ignore deployment plan files (created dynamically in GitHub Actions)
+*.tfplan
+tfplan
+
+# Exception: allow committing empty templates for other developers
+!*.example
+!*.sample
+
+# NOTE: We intentionally DO NOT ignore the .terraform.lock.hcl file!
+# According to HashiCorp best practices, the lock file should be kept in the repository.
+
+# =========================
+# ANSIBLE
+# =========================
+
+# Retry files (created when a playbook fails)
+*.retry
+.ansible/
+
+# If you download Galaxy roles locally to a folder (our pipeline does this on the fly)
+roles/*
+!roles/requirements.yml
+collections/
+
+# SSH key and password files (e.g., Ansible Vault)
+.vault_pass
+.vault_pass.txt
+*.pem
+*.key
+*.rsa
+*.ed25519
+
+# =========================
+# OPERATING SYSTEMS AND EDITORS
+# =========================
+.DS_Store
+.DS_Store?
+._*
+.Trashes
+.vscode/
+.idea/
+*.swp
