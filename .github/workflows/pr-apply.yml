@@ -11,8 +11,9 @@ permissions:
 
 jobs:
   prepare:
-    name: Parse Command & Detech Changes
+    name: Parse Command & Detect Changes
     runs-on: self-hosted
+    if: ${{ github.event.issue.pull_request && startsWith(github.event.comment.body, '/apply') }}
     outputs:
       matrix: ${{ steps.diff.outputs.matrix }}
       branch: ${{ steps.pr-data.outputs.branch }}
@@ -27,7 +28,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          PR_JSON=$(gh pr view ${{ github.event.issue.number }} --repo ${{ github.event.repository }} --json headRefName)
+          PR_JSON=$(gh pr view ${{ github.event.issue.number }} --repo ${{ github.repository }} --json headRefName)
           BRANCH_NAME=$(echo $PR_JSON | jq -r .headRefName)
           echo "branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
@@ -80,7 +81,7 @@ jobs:
           echo "matrix=$JSON_ARRAY" >> $GITHUB_OUTPUT
 
   apply:
-    name: "Deploy component: ${{ needs.prepare.outputs.matrix }}"
+    name: "Deploy component: ${{ matrix.name }}"
     needs: prepare
     if: ${{ needs.prepare.outputs.matrix != '[]' }}
     strategy:
@@ -92,7 +93,10 @@ jobs:
       TF_DIR: "components/${{ matrix.name }}/terraform"
       ANSIBLE_DIR: "components/${{ matrix.name }}/ansible"
       ANSIBLE_HOST_KEY_CHECKING: "False"
+      ANSIBLE_HOST_PATTERN_MISMATCH: "error"
       PROXMOX_VE_API_TOKEN: ${{ secrets.PROXMOX_API_TOKEN }}
+      PROXMOX_TOKEN_ID: ${{ secrets.PROXMOX_TOKEN_ID }}
+      PROXMOX_TOKEN_SECRET: ${{ secrets.PROXMOX_TOKEN_SECRET }}
       AWS_ACCESS_KEY_ID: ${{ secrets.MINIO_ACCESS_KEY }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.MINIO_SECRET_KEY }}
     steps:
@@ -104,6 +108,8 @@ jobs:
       - name: "[Terraform] Setup Terraform"
         if: ${{ matrix.tf == true }}
         uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
 
       - name: "[Terraform] Terraform init"
         if: ${{ matrix.tf == true }}
@@ -122,12 +128,22 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
+      - name: "[Ansible] Setup Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: "[Ansible] Install Ansible"
+        run: |
+          python -m pip install --upgrade pip
+          pip install --ignore-installed ansible requests proxmoxer
+
       - name: "[Ansible] Install versioned roles"
         if: ${{ matrix.ansible == true }}
         working-directory: ${{ env.ANSIBLE_DIR }}
         run: |
           if [ -f "requirements.yml" ]; then
-              ansible-galaxy install -r requirements.yml
+              ansible-galaxy install -r requirements.yml --force
           fi
 
       - name: "[Ansible] Run Ansible Playbook"
