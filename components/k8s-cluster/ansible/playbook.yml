@@ -1,0 +1,11 @@
+# K8S CLUSTER CONFIGURATION
+
+- name: Configure Kubernetes Cluster
+  hosts: k8s_master,k8s_worker
+  become: yes
+
+  any_errors_fatal: true
+
+  roles:
+    - base-os
+    - kubernetes

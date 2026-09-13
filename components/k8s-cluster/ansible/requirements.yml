@@ -1,0 +1,10 @@
+# REQUIRED ROLES:
+
+roles:
+  - name: base-os
+    src: https://github.com/skni-kod/ansible-roles.git
+    version: v1.1.0
+
+  - name: kubernetes
+    src: https://github.com/skni-kod/ansible-roles.git
+    version: v1.1.0
