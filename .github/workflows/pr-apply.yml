@@ -13,6 +13,7 @@ jobs:
   prepare:
     name: Parse Command & Detech Changes
     runs-on: self-hosted
+    if: ${{ github.event.issue.pull_request && startsWith(github.event.comment.body, '/apply') }}
     outputs:
       matrix: ${{ steps.diff.outputs.matrix }}
       branch: ${{ steps.pr-data.outputs.branch }}

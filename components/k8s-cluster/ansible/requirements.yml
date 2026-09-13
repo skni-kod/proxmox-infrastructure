@@ -1,0 +1,13 @@
+# REQUIRED ROLES:
+collections:
+  - name: community.proxmox
+    version: ">=1.5.0"
+
+roles:
+  - name: base-os
+    src: https://github.com/skni-kod/ansible-roles.git
+    version: v1.1.2
+
+  - name: kubernetes
+    src: https://github.com/skni-kod/ansible-roles.git
+    version: v1.1.2
