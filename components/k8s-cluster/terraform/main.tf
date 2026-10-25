@@ -25,29 +25,29 @@ provider "proxmox" {
 }
 
 module "k8s_nodes" {
-  source = "git::https://github.com/skni-kod/terraform-modules.git//proxmox-vm?ref=v1.0.0"
-  count  = length(var.k8s_nodes)
+  source   = "git::https://github.com/skni-kod/terraform-modules.git//proxmox-vm?ref=v1.0.0"
+  for_each = var.k8s_nodes
 
   # Base configuration
-  name        = var.k8s_nodes[count.index].name
+  name        = each.key
   target_node = var.target_node
-  vmid        = var.k8s_nodes[count.index].vmid
+  vmid        = each.value.vmid
 
   # Assign tags
-  tags = length(regexall("master", var.k8s_nodes[count.index].name)) > 0 ? ["k8s_cluster", "k8s_master"] : ["k8s_cluster", "k8s_worker"]
+  tags = length(regexall("master", each.key)) > 0 ? ["k8s_cluster", "k8s_master"] : ["k8s_cluster", "k8s_worker"]
 
-  cores  = var.k8s_nodes[count.index].cores
-  memory = var.k8s_nodes[count.index].mem
+  cores  = each.value.cores
+  memory = each.value.mem
 
   # Disk
-  disk_size = var.k8s_nodes[count.index].disk_size
+  disk_size = each.value.disk_size
 
   # Clone
   cloned_vm_id = 9000
 
   # Network
   network_bridge = var.network_bridge
-  ip_address     = var.k8s_nodes[count.index].ip
+  ip_address     = each.value.ip
   gateway        = var.gateway
 
   # OS config
