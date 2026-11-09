@@ -11,3 +11,7 @@ roles:
   - name: kubernetes
     src: https://github.com/skni-kod/ansible-roles.git
     version: v1.1.2
+
+  - name: argo-cd
+    src: https://github.com/skni-kod/ansible-roles.git
+    version: v1.2.0
