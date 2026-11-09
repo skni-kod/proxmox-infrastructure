@@ -1,11 +1,22 @@
 # K8S CLUSTER CONFIGURATION
 
+- name: BaseOS configuration
+  hosts: k8s_master,k8s_worker
+  become: true
+  any_errors_fatal: true
+  roles:
+    - base-os
+
 - name: Configure Kubernetes Cluster
   hosts: k8s_master,k8s_worker
   become: true
-
   any_errors_fatal: true
-
   roles:
-    - base-os
     - kubernetes
+
+- name: Setup ArgoCD on cluster
+  hosts: k8s_master
+  become: false
+  any_errors_fatal: true
+  roles:
+    - argo-cd
