@@ -2,16 +2,3 @@
 collections:
   - name: community.proxmox
     version: ">=1.5.0"
-
-roles:
-  - name: base-os
-    src: https://github.com/skni-kod/ansible-roles.git
-    version: v1.2.3
-
-  - name: kubernetes
-    src: https://github.com/skni-kod/ansible-roles.git
-    version: v1.2.3
-
-  - name: argo-cd
-    src: https://github.com/skni-kod/ansible-roles.git
-    version: v1.2.3

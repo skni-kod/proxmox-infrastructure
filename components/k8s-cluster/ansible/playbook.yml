@@ -6,7 +6,7 @@
   gather_facts: false
   any_errors_fatal: true
   roles:
-    - base-os
+    - base_os
 
 - name: Configure Kubernetes Cluster
   hosts: k8s_master,k8s_worker
@@ -20,4 +20,4 @@
   become: false
   any_errors_fatal: true
   roles:
-    - argo-cd
+    - argo_cd

@@ -1,4 +1,4 @@
-network_bridge = "vmbr4"
+network_bridge = "vmbr1"
 gateway        = "192.168.1.1"
 ssh_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEoBqQY4eo8NTnzpebr0pCy1wZR7wWZ3G8jaIMYIFZdu sknikodprz@gmail.com"
 
