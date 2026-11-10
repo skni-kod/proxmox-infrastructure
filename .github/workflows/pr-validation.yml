@@ -110,23 +110,41 @@ jobs:
         with:
           python-version: "3.10"
 
+      - name: "[Ansible] Setup yq"
+        if: ${{ matrix.ansible == true }}
+        run: |
+          if ! command -v yq &> /dev/null; then
+            echo "yq not found, installing..."
+            sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
+            sudo chmod +x /usr/bin/yq
+          else
+            echo "yq is already installed."
+          fi
+
       - name: "[Ansible] Setup SSH Key"
         if: ${{ matrix.ansible == true }}
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: "[Ansible] Install versioned roles"
+      - name: "[Ansible] Install collection & roles"
         if: ${{ matrix.ansible == true }}
         working-directory: ${{ env.ANSIBLE_DIR }}
         run: |
           if [ -f "requirements.yml" ]; then
-              ansible-galaxy install -r requirements.yml
+              ansible-galaxy collection install -r requirements.yml -p ./collections --force
           fi
+
+          cd ${{ github.workspace }}
+          chmod +x install_roles.sh
+          ./install_roles.sh ${{ matrix.name }}
 
       - name: "[Ansible] Ansible Lint"
         if: ${{ matrix.ansible == true }}
         working-directory: ${{ env.ANSIBLE_DIR }}
+        env:
+          ANSIBLE_ROLES_PATH: ./roles
+          ANSIBLE_COLLECTIONS_PATH: ./collections
         run: |
           pip install ansible-lint
           ansible-lint playbook.yml
@@ -134,5 +152,8 @@ jobs:
       - name: "[Ansible] Ansible Syntax Check"
         if: ${{ matrix.ansible == true }}
         working-directory: ${{ env.ANSIBLE_DIR }}
+        env:
+          ANSIBLE_ROLES_PATH: ./roles
+          ANSIBLE_COLLECTIONS_PATH: ./collections
         run: |
           ansible-playbook -i inventory.proxmox.yml playbook.yml --syntax-check
