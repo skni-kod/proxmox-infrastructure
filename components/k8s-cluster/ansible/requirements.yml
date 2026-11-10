@@ -6,12 +6,12 @@ collections:
 roles:
   - name: base-os
     src: https://github.com/skni-kod/ansible-roles.git
-    version: v1.2.2
+    version: v1.2.3
 
   - name: kubernetes
     src: https://github.com/skni-kod/ansible-roles.git
-    version: v1.2.2
+    version: v1.2.3
 
   - name: argo-cd
     src: https://github.com/skni-kod/ansible-roles.git
-    version: v1.2.2
+    version: v1.2.3
