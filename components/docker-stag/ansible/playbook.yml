@@ -1,0 +1,16 @@
+# DOCKER STAG CONFIGURATION
+
+- name: BaseOS configuration
+  hosts: docker_stag
+  become: true
+  gather_facts: false
+  any_errors_fatal: true
+  roles:
+    - base_os
+
+- name: Configure Docker
+  hosts: docker_stag
+  become: true
+  any_errors_fatal: true
+  roles:
+    - docker

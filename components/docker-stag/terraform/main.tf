@@ -1,0 +1,56 @@
+terraform {
+  backend "s3" {
+    bucket                      = "terraform-state"
+    key                         = "docker-stag/terraform.tfstate"
+    region                      = "main"
+    endpoints                   = { s3 = "http://192.168.1.125:9000" }
+    skip_credentials_validation = true
+    skip_metadata_api_check     = true
+    skip_region_validation      = true
+    skip_requesting_account_id  = true
+    use_path_style              = true
+  }
+
+  required_providers {
+    proxmox = {
+      source  = "bpg/proxmox"
+      version = "~> 0.66"
+    }
+  }
+}
+
+provider "proxmox" {
+  endpoint = var.pm_api_url
+  insecure = true
+}
+
+module "docker_nodes" {
+  source   = "git::https://github.com/skni-kod/terraform-modules.git//proxmox-vm?ref=v1.0.0"
+  for_each = var.docker_nodes
+
+  # Base configuration
+  name        = each.key
+  target_node = var.target_node
+  vmid        = each.value.vmid
+
+  # Assign tags
+  tags = ["docker", "staging"]
+
+  cores  = each.value.cores
+  memory = each.value.mem
+
+  # Disk
+  disk_size = each.value.disk_size
+
+  # Clone
+  cloned_vm_id = 9000
+
+  # Network
+  network_bridge = var.network_bridge
+  ip_address     = each.value.ip
+  gateway        = var.gateway
+
+  # OS config
+  ci_user        = var.ci_user
+  ssh_public_key = var.ssh_public_key
+}
