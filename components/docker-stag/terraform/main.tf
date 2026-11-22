@@ -24,33 +24,20 @@ provider "proxmox" {
   insecure = true
 }
 
-module "docker_nodes" {
-  source   = "git::https://github.com/skni-kod/terraform-modules.git//proxmox-vm?ref=v1.0.0"
-  for_each = var.docker_nodes
+module "docker_stag" {
+  source = "git::https://github.com/skni-kod/terraform-modules.git//proxmox-vm?ref=v1.0.0"
 
-  # Base configuration
-  name        = each.key
-  target_node = var.target_node
-  vmid        = each.value.vmid
-
-  # Assign tags
-  tags = ["docker", "staging"]
-
-  cores  = each.value.cores
-  memory = each.value.mem
-
-  # Disk
-  disk_size = each.value.disk_size
-
-  # Clone
-  cloned_vm_id = 9000
-
-  # Network
+  name           = var.docker_node.name
+  target_node    = var.target_node
+  vmid           = var.docker_node.vmid
+  tags           = ["docker", "staging"]
+  cores          = var.docker_node.cores
+  memory         = var.docker_node.mem
+  disk_size      = var.docker_node.disk_size
+  cloned_vm_id   = 9000
   network_bridge = var.network_bridge
-  ip_address     = each.value.ip
+  ip_address     = var.docker_node.ip
   gateway        = var.gateway
-
-  # OS config
   ci_user        = var.ci_user
   ssh_public_key = var.ssh_public_key
 }
