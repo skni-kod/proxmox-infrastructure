@@ -31,13 +31,14 @@ variable "gateway" {
   type        = string
 }
 
-variable "docker_nodes" {
-  description = "Map of VMs to deploy"
-  type = map(object({
+variable "docker_node" {
+  description = "Single Docker VM definition"
+  type = object({
+    name      = string
     ip        = string
     vmid      = number
     mem       = number
     cores     = number
     disk_size = number
-  }))
+  })
 }
