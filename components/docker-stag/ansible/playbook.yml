@@ -14,3 +14,26 @@
   any_errors_fatal: true
   roles:
     - docker
+
+- name: Deploy Docker projects
+  hosts: docker_stag
+  become: true
+  gather_facts: false
+  any_errors_fatal: true
+  tasks:
+    - name: Ensure the project directory exists
+      ansible.builtin.file:
+        path: /opt/docker-project
+        state: directory
+        mode: "0755"
+
+    - name: Copy Docker project files
+      ansible.builtin.copy:
+        src: files/
+        dest: /opt/docker-project/
+        mode: "0644"
+
+    - name: Deploy Portainer
+      community.docker.docker_compose_v2:
+        project_src: /opt/docker-project/portainer
+        state: present
