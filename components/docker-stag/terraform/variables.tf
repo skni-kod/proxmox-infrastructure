@@ -31,6 +31,12 @@ variable "gateway" {
   type        = string
 }
 
+variable "cloned_vm_id" {
+  description = "Template VMID to clone"
+  type        = number
+  default     = 9000
+}
+
 variable "docker_node" {
   description = "Single Docker VM definition"
   type = object({

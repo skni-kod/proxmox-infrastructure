@@ -34,7 +34,7 @@ module "docker_stag" {
   cores          = var.docker_node.cores
   memory         = var.docker_node.mem
   disk_size      = var.docker_node.disk_size
-  cloned_vm_id   = 9000
+  cloned_vm_id   = var.cloned_vm_id
   network_bridge = var.network_bridge
   ip_address     = var.docker_node.ip
   gateway        = var.gateway
