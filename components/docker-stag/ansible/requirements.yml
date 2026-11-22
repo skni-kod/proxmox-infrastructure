@@ -1,0 +1,4 @@
+# REQUIRED ROLES:
+collections:
+  - name: community.proxmox
+    version: ">=1.5.0"

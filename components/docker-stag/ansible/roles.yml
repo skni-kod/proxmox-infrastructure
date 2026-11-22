@@ -1,0 +1,5 @@
+roles:
+  - name: base_os
+    version: v1.2.9
+  - name: docker
+    version: v1.3.0
